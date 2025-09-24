@@ -1,11 +1,11 @@
 [package]
-name = "socket_server"
+name = "rust-socketio-microserv"
 version = "0.1.0"
 edition = "2021"
 license = "AGPL-3.0"
 authors = ["Paul Werner <https://github.com/paulpwo>"]
 repository = "https://github.com/paulpwo/sockets_server_rust"
-description = "A WebSocket server implementation in Rust with Socket.IO support"
+description = "High-performance Socket.IO microservice in Rust with real-time broadcasting and metrics"
 
 [dependencies]
 tokio = { version = "1", features = ["full"] }
