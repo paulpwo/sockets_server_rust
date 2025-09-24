@@ -2,7 +2,7 @@
 
 ## Descripción
 
-Servidor WebSocket implementado en Rust usando Axum, con soporte para broadcasting de mensajes, métricas de salud y monitoreo.
+Servidor WebSocket implementado en Rust usando Axum y Socket.IO, con soporte para broadcasting de mensajes, métricas de salud y monitoreo de sistema.
 
 ## Requisitos Previos
 
@@ -77,17 +77,101 @@ Ejecuta el contenedor:
 docker run -p 3030:3030 rush-server
 ```
 
-## Pruebas
+## Pruebas de Carga
 
-Para probar el servidor con el cliente Socket.IO:
+El proyecto incluye un sistema completo de pruebas de carga usando Socket.IO para validar el rendimiento del servidor WebSocket.
 
-Asegúrate de que el servidor esté ejecutándose, luego ejecuta:
+### Configuración de las Pruebas
+
+Las pruebas están ubicadas en el directorio `loadtest/` e incluyen:
+
+- **package.json**: Configuración de dependencias y scripts de prueba
+- **test_socketio_client.js**: Cliente de prueba Socket.IO con métricas avanzadas
+
+### Instalación de Dependencias
+
+Navega al directorio de pruebas e instala las dependencias:
 
 ```bash
-node ../test_socketio_client.js
+cd loadtest
+npm install
 ```
 
-Esto ejecutará pruebas de conexión y envío de mensajes.
+### Ejecución de Pruebas
+
+#### Prueba Rápida (Configuración por Defecto)
+
+```bash
+npm test
+```
+
+Esto ejecuta: 500 conexiones simultáneas durante 10 segundos contra `http://localhost:3030`
+
+#### Pruebas Personalizadas
+
+```bash
+node test_socketio_client.js -url=<URL> -connections=<NUM> -duration=<SEC> [-rate=<NUM>]
+```
+
+**Parámetros obligatorios:**
+- `-url=<URL>`: URL del servidor Socket.IO (ej: http://localhost:3030)
+- `-connections=<NUM>`: Número de conexiones simultáneas
+- `-duration=<SEC>`: Duración de la prueba en segundos
+
+**Parámetros opcionales:**
+- `-rate=<NUM>`: Mensajes por segundo por conexión (default: 1)
+
+#### Ejemplos de Uso
+
+```bash
+# Prueba básica con 100 conexiones por 30 segundos
+node test_socketio_client.js -url=http://localhost:3030 -connections=100 -duration=30
+
+# Prueba intensiva con 1000 conexiones y 2 mensajes por segundo
+node test_socketio_client.js -url=http://localhost:3030 -connections=1000 -duration=60 -rate=2
+
+# Prueba de estrés con 2000 conexiones
+node test_socketio_client.js -url=http://localhost:3030 -connections=2000 -duration=120
+```
+
+### Métricas Reportadas
+
+El sistema de pruebas proporciona métricas en tiempo real:
+
+- **Conexiones activas**: Número de conexiones Socket.IO establecidas
+- **Mensajes enviados**: Total de mensajes transmitidos al servidor
+- **Mensajes recibidos**: Total de mensajes recibidos del servidor
+- **Errores**: Número de errores de conexión o transmisión
+- **Throughput**: Mensajes por segundo (enviados y recibidos)
+- **Tasa de error**: Porcentaje de errores sobre el total de operaciones
+
+### Interpretación de Resultados
+
+```
+⏱️  1:30 | 🔗 500 | 📤 750 | 📥 750 | ❌ 0 | 📊 8.3 msg/s
+```
+
+- `1:30`: Tiempo transcurrido (minutos:segundos)
+- `🔗 500`: Conexiones activas
+- `📤 750`: Mensajes enviados
+- `📥 750`: Mensajes recibidos
+- `❌ 0`: Errores
+- `📊 8.3 msg/s`: Throughput actual
+
+### Requisitos del Sistema
+
+Para ejecutar las pruebas necesitas:
+
+- Node.js 14+ 
+- Servidor Rust ejecutándose en el puerto especificado
+- Suficiente memoria y descriptores de archivo para las conexiones simultáneas
+
+### Recomendaciones de Prueba
+
+1. **Pruebas graduales**: Comienza con pocas conexiones y aumenta gradualmente
+2. **Monitoreo del servidor**: Observa el uso de CPU y memoria del servidor Rust
+3. **Límites del sistema**: Verifica los límites de descriptores de archivo (`ulimit -n`)
+4. **Red local**: Para mejores resultados, ejecuta las pruebas en la misma máquina o red local
 
 ## Notas sobre Optimizaciones para Kubernetes
 
@@ -98,10 +182,3 @@ Esto ejecutará pruebas de conexión y envío de mensajes.
 - **Scaling**: El servidor soporta múltiples conexiones concurrentes; escala horizontalmente según la carga.
 - **Configuración**: Considera usar ConfigMaps para variables de entorno como el puerto.
 
-## Contribución
-
-[Instrucciones si aplica]
-
-## Licencia
-
-[Licencia si aplica]
