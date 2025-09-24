@@ -1,0 +1,27 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "rust: cargo build",
+            "type": "shell",
+            "command": "${env:HOME}/.cargo/bin/cargo",
+            "args": ["build"],
+            "problemMatcher": [
+                "$rustc"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "rust: cargo test build",
+            "type": "shell",
+            "command": "${env:HOME}/.cargo/bin/cargo",
+            "args": ["test", "--no-run"],
+            "problemMatcher": [
+                "$rustc"
+            ]
+        }
+    ]
+}
