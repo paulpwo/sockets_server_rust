@@ -1,0 +1,20 @@
+{
+  "name": "loadtest",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+      "test": "node test_socketio_client.js -url=http://localhost:3030 -connections=500 -duration=10"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "axios": "^0.26.1",
+    "body-parser": "^1.19.2",
+    "compression": "^1.7.4",
+    "cors": "^2.8.5",
+    "socket.io": "^4.4.1",
+    "socket.io-client": "^4.8.1",
+    "ws": "^8.18.3"
+  }
+}
